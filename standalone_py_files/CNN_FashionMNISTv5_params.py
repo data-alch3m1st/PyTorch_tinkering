@@ -41,8 +41,14 @@ transform = transforms.Compose([
     transforms.Normalize((0.5,), (0.5,))
 ])
 
-train_dataset = datasets.FashionMNIST('./data', train=True, download=True, transform=transform)
-test_dataset = datasets.FashionMNIST('./data', train=False, download=True, transform=transform)
+# Note: to get natural train/test splits for FashionMNIST: train-> train=True ; test-> train=False ;
+train_dataset = datasets.FashionMNIST(
+    './data', train=True
+    , download=True, transform=transform)
+
+test_dataset = datasets.FashionMNIST(
+    './data', train=False
+    , download=True, transform=transform)
 
 # Skorch can handle PyTorch Datasets directly
 X_train, y_train = train_dataset.data.float().unsqueeze(1), train_dataset.targets
@@ -189,45 +195,3 @@ ax.set_title('Confusion Matrix')
 
 # Display the plot
 plt.show();
-
-
-
-
-
-
-
-
-
-# ---------------------------------------------------------
-# 4. Define parameter grid
-#    Note: use 'module__' prefix for module args
-# ---------------------------------------------------------
-param_grid = {
-    "module__channels": [32, 64]
-    , "module__dropout": [0.0, 0.25, 0.5]
-    , "lr": [1e-4, 3e-4, 1e-3]
-    , "optimizer": [torch.optim.Adam, torch.optim.SGD]
-    , "batch_size": [256]
-    , "max_epochs": [3]
-    }
-
-# ---------------------------------------------------------
-# 5A. Exhaustive Grid Search (slow but complete)
-# ---------------------------------------------------------
-gs = GridSearchCV(
-    estimator=net
-    , param_grid=param_grid
-    , cv=3               # 3-fold cross validation
-    , scoring="accuracy" # use accuracy for FashionMNIST
-    , verbose=1
-    , n_jobs=-1          # parallelize if possible
-)
-
-# Fit the grid search
-gs.fit(X, y)
-
-print("Best CV accuracy:", gs.best_score_)
-print("Best params:", gs.best_params_)
-
-
-
