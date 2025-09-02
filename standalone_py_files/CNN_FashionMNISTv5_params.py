@@ -130,7 +130,7 @@ print("Best CV accuracy:", rs.best_score_)
 print("Best params:", rs.best_params_)
 
 # ---------------------------------------------------------
-# Send results to a dataframe for clean review;
+# 5. Send results to a dataframe for clean review;
 # ---------------------------------------------------------
 results = pd.DataFrame(rs.cv_results_)
 results = results[[
@@ -146,7 +146,7 @@ results
 results['params'].iloc[0] 
 
 # ---------------------------------------------------------
-# set up the best using our best_estimator_
+# 6. Set up the best performing model using our best_estimator_
 # ---------------------------------------------------------
 best_rand_cv = rs.best_estimator_
 best_rand_cv
@@ -157,7 +157,7 @@ class_names = train_dataset.classes
 class_names
 
 # ---------------------------------------------------------
-# Predict with best estimator
+# 7. Predict with best estimator
 # ---------------------------------------------------------
 y_pred = rs.best_estimator_.predict(
     X_test)
@@ -172,7 +172,7 @@ print(report)
 cm
 
 # ---------------------------------------------------------
-# Plot a Confusiom Matrix to show broad view of model performance
+# 8a. Confusiom Matrix to show broad view of model performance
 # ---------------------------------------------------------
 cmp = ConfusionMatrixDisplay.from_estimator(
     rs, X_test, y_test
@@ -181,7 +181,7 @@ cmp = ConfusionMatrixDisplay.from_estimator(
 );
 
 # ---------------------------------------------------------
-# Plot the Confusion Matrix
+# 8b. Plot the Confusion Matrix
 # ---------------------------------------------------------
 # Create a Matplotlib figure and axes with the desired figsize
 fig, ax = plt.subplots(figsize=(12, 9)) # Adjust width and height as needed
@@ -195,3 +195,10 @@ ax.set_title('Confusion Matrix')
 
 # Display the plot
 plt.show();
+
+
+# ----------------------------------------------------------------------------------------------------- #
+######### PART II.: Test/Train/Eval Loops (PyTorch Native) on best performing model (params) #########
+# ----------------------------------------------------------------------------------------------------- #
+
+
