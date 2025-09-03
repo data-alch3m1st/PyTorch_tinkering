@@ -532,10 +532,33 @@ for i, sample in enumerate(test_samples):
   plt.axis(False);
 
 # ---------------------------------------------------------
-# 7. Build a make_predictions function
+# 8. Final Confusion Matrix
 # ---------------------------------------------------------
 
 
+from torchmetrics import ConfusionMatrix
+from mlxtend.plotting import plot_confusion_matrix
 
+# Create confusion matrix
+cm2 = ConfusionMatrix(
+    num_classes=len(class_names)
+    , task='multiclass'
+#     , normalize="true"
+)
+
+cm2_tensor = cm2(
+    preds=y_pred_tensor
+    , target=test_dataset.targets)
+
+# Convert to NumPy
+cm2_numpy = cm2_tensor.numpy()
+
+# Plot confusion matrix with formatted values
+fig, ax = plot_confusion_matrix(
+    conf_mat=cm2_numpy
+    , class_names=class_names
+    , figsize=(12, 9)
+    , show_normed=True  # Normalized values
+)
 
 
