@@ -438,7 +438,104 @@ total_train_time = print_train_time(
     , device=device
 )
 
-print(f"✅ Training complete in {total_train_time:.2f} seconds")
+print(f"Training complete in {total_train_time:.2f} seconds")
+
+
+# ---------------------------------------------------------
+# 6. Get Model Results
+# ---------------------------------------------------------
+
+model_0x_results = eval_model(
+    model=model_0x
+    , data_loader=test_dataloader
+    , loss_fn=loss_fn
+    , accuracy_fn=accuracy_fn
+)
+model_0x_results
+
+
+# ---------------------------------------------------------
+# 7a. Build a make_predictions function
+# ---------------------------------------------------------
+
+def make_predictions(model: torch.nn.Module, data: list, device: torch.device = device):
+    pred_probs = []
+    model.eval()
+    with torch.inference_mode():
+        for sample in data:
+            # Prepare sample
+            sample = torch.unsqueeze(sample, dim=0).to(device) # Add an extra dimension and send sample to device
+
+            # Forward pass (model outputs raw logit)
+            pred_logit = model(sample)
+
+            # Get prediction probability (logit -> prediction probability)
+            pred_prob = torch.softmax(pred_logit.squeeze(), dim=0) # note: perform softmax on the "logits" dimension, not "batch" dimension (in this case we have a batch size of 1, so can perform on dim=0)
+
+            # Get pred_prob off GPU for further calculations
+            pred_probs.append(pred_prob.cpu())
+            
+    # Stack the pred_probs to turn list into a tensor
+    return torch.stack(pred_probs)
+
+
+# ---------------------------------------------------------
+# 7b. Make actual predictions!
+# ---------------------------------------------------------
+
+# Make predictions on test samples with model 2
+pred_probs= make_predictions(model=model_0x, 
+                             data=test_samples)
+
+# View first two prediction probabilities list
+pred_probs[:2]
+
+
+# Turn the prediction probabilities into prediction labels by taking the argmax()
+pred_classes = pred_probs.argmax(dim=1)
+pred_classes
+
+# Are our predictions in the same form as our test labels? 
+test_labels, pred_classes
+
+
+
+# ---------------------------------------------------------
+# 7c. Plot predictions visually
+# ---------------------------------------------------------
+
+# Plot predictions
+plt.figure(figsize=(9, 9))
+nrows = 3
+ncols = 3
+for i, sample in enumerate(test_samples):
+  # Create a subplot
+  plt.subplot(nrows, ncols, i+1)
+
+  # Plot the target image
+  plt.imshow(sample.squeeze(), cmap="gray")
+
+  # Find the prediction label (in text form, e.g. "Sandal")
+  pred_label = class_names[pred_classes[i]]
+
+  # Get the truth label (in text form, e.g. "T-shirt")
+  truth_label = class_names[test_labels[i]] 
+
+  # Create the title text of the plot
+  title_text = f"Pred: {pred_label} | Truth: {truth_label}"
+  
+  # Check for equality and change title colour accordingly
+  if pred_label == truth_label:
+      plt.title(title_text, fontsize=10, c="g") # green text if correct
+  else:
+      plt.title(title_text, fontsize=10, c="r") # red text if wrong
+  plt.axis(False);
+
+# ---------------------------------------------------------
+# 7. Build a make_predictions function
+# ---------------------------------------------------------
+
+
 
 
 
