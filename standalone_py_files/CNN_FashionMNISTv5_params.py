@@ -484,8 +484,10 @@ def make_predictions(model: torch.nn.Module, data: list, device: torch.device = 
 # ---------------------------------------------------------
 
 # Make predictions on test samples with model 2
-pred_probs= make_predictions(model=model_0x, 
-                             data=test_samples)
+pred_probs= make_predictions(
+    model=model_0x
+    , data=test_samples
+    )
 
 # View first two prediction probabilities list
 pred_probs[:2]
