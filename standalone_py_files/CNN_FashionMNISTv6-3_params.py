@@ -179,8 +179,11 @@ best_model = rs.best_estimator_
 y_pred = best_model.predict(X_test)
 
 # Print metrics
-print("Accuracy:", accuracy_score(y_test, y_pred))
-print("Classification Report:\n", classification_report(y_test, y_pred))
+print("Accuracy:\n", accuracy_score(y_test, y_pred)))
+print('\n=================================================================\n')
+print('Confusion Matrix:\n', confusion_matrix(y_test, y_pred)))
+print('\n=================================================================\n')
+print("Classification Report:\n", classification_report(y_test, y_pred)))
 
 # Confusion Matrix
 cm = ConfusionMatrix(num_classes=10, task='multiclass')
@@ -293,9 +296,12 @@ with torch.no_grad():
 all_preds = torch.cat(all_preds)
 all_labels = torch.cat(all_labels)
 
-print(confusion_matrix(all_labels, all_preds))
+
+print(("\nAccuracy:\n", accuracy_score(all_labels, all_preds))
 print('\n=================================================================\n')
-print(classification_report(all_labels, all_preds))
+print('Confusion Matrix:\n',confusion_matrix(all_labels, all_preds))
+print('\n=================================================================\n')
+print("Classification Report:\n"classification_report(all_labels, all_preds))
 
 
 # ---------------------------------------------------------
