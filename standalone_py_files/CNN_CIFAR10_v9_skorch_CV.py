@@ -19,6 +19,7 @@
 # !pip install skorch
 # !pip install torchmetrics
 
+
 # ---------------------------------------------------------
 # 0. Imports, Device-Agnostic Code
 # ---------------------------------------------------------
@@ -198,7 +199,7 @@ param_dist = {
     "module__channels": [64, 128]  # Increasing upper range
     , "module__dropout": [0.2, 0.3]  # Slightly reduced dropout values
     , "lr": [1e-4, 3e-4, 1e-3]  # Removed extreme values for better control
-    , "optimizer": [torch.optim.SGD, torch.optim.RMSprop]   # torch.optim.Adam,
+    , "optimizer": [torch.optim.Adam, torch.optim.SGD, torch.optim.RMSprop]   # torch.optim.Adam removed for CIFAR but added back for consistency;
     , "batch_size": [128]  # Added smaller batch size for exploration # 64,
     , "optimizer__momentum": [0.0, 0.9]
     , "optimizer__weight_decay": [0.0, 1e-4, 5e-4]
@@ -447,7 +448,9 @@ torch.save({
 
 print("Model saved to Cifar10CNN_v9_best_100_epochs.pth")
 
+# ---------------------------------------------------------
 # 13. Retrain (If needed)
+# ---------------------------------------------------------
 
 more_epochs = 100
 
@@ -467,7 +470,10 @@ for epoch in tqdm(range(more_epochs)):
 
 train_acc, test_acc
 
+# ---------------------------------------------------------
 # 14a. Final evaluation on test set with sklearn metrics
+# ---------------------------------------------------------
+
 model.eval()
 all_preds = []
 all_labels = []
@@ -484,7 +490,9 @@ with torch.no_grad():
 all_preds = np.array(all_preds)
 all_labels = np.array(all_labels)
 
+# ---------------------------------------------------------
 # 14b. Compute metrics
+# ---------------------------------------------------------
 
 print("\nFinal Evaluation with Sklearn Metrics")
 print("Accuracy:", accuracy_score(all_labels, all_preds))
@@ -501,7 +509,9 @@ cm_tensor = cm(all_preds_tensor, all_labels_tensor)
 # cm_tensor
 print("\nClassification Report:\n", classification_report(all_labels, all_preds))
 
+# ---------------------------------------------------------
 # 15. Final Confusion Matrix for Best & Fully Trained Model
+# ---------------------------------------------------------
 
 fig, ax = plt.subplots(figsize=(12, 10))
 
@@ -518,7 +528,10 @@ disp.plot(ax=ax, cmap="Blues", xticks_rotation=45)
 plt.title("Confusion Matrix for CIFAR-10 - Final Model")
 plt.show();
 
+# ---------------------------------------------------------
 # 16a. Save both model weights and optimizer state (in case you want to retrain, run add'l epochs, etc.)
+# ---------------------------------------------------------
+
 torch.save({
     'epoch': epochs + more_epochs
     , 'model_state_dict': model.state_dict()
@@ -528,7 +541,10 @@ torch.save({
 
 print("Model saved to Cifar10CNN_v9_more_retrained_200_epochs__best.pth")
 
+# ---------------------------------------------------------
 # 16b. Save best weights  (for eval mode only, so can only eval new data w/ weights; no add'l training;)
+# ---------------------------------------------------------
+
 torch.save(model.state_dict(), "Cifar10CNN_v9_more_retrained_best_weights.pth")
 
 # Cifar10CNN_v9_best
@@ -536,4 +552,3 @@ torch.save(model.state_dict(), "Cifar10CNN_v9_more_retrained_best_weights.pth")
 torch.save(model.state_dict(), "Cifar10CNN_v9_best_weights.pth")
 
 print("\nClassification Report:\n", classification_report(all_labels, all_preds))
-
