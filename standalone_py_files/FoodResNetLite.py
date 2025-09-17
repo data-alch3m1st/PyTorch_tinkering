@@ -234,8 +234,8 @@ pd.DataFrame(rs.cv_results_).to_csv("food_resnetlite_rs_results.csv", index=Fals
 best_params = rs.best_params_
 
 model = FoodResNetLite(
-    num_classes=num_classes,
-    dropout=best_params["module__dropout"]
+    num_classes=num_classes
+    , dropout=best_params["module__dropout"]
 ).to(device)
 
 batch_size = int(best_params.get("batch_size", 32))
