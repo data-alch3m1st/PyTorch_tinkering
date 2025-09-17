@@ -313,11 +313,11 @@ for epoch in tqdm(range(epochs)):
     if test_acc > best_test_acc:
         best_test_acc = test_acc
         torch.save({
-            'epoch': epoch+1,
-            'model_state_dict': model.state_dict(),
-            'optimizer_state_dict': optimizer.state_dict(),
-            'test_acc': test_acc,
-            'class_names': class_names
+            'epoch': epoch+1
+            , 'model_state_dict': model.state_dict()
+            , 'optimizer_state_dict': optimizer.state_dict()
+            , 'test_acc': test_acc
+            , 'class_names': class_names
         }, checkpoint_path)
         print(f"Saved best checkpoint (test_acc={test_acc:.4f}) -> {checkpoint_path}")
 
