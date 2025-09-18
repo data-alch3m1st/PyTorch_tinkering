@@ -248,33 +248,6 @@ print(results_v9.sort_values(by='rank_test_score', ascending=True)['params'].ilo
 print(results_v9.sort_values(by='rank_test_score', ascending=True)['params'].iloc[1])
 print(results_v9.sort_values(by='rank_test_score', ascending=True)['params'].iloc[2])
 
-# from google.colab import drive
-# drive.mount('/content/drive')   # follow the auth steps
-results_v9.to_csv('/content/drive/MyDrive/results_v9.csv', index=False)
-
-# 2) Inspect the current Colab VM working directory
-import os
-print("Colab VM cwd:", os.getcwd())
-print("Files in /content:", os.listdir('/content'))
-
-# 3) Define the Drive path you want to use
-# Note: "MyDrive" is the mount point for "My Drive"
-drive_folder = '/content/drive/MyDrive/Colab Notebooks/PyTorch_tinkering'
-
-# 4) Create the target folder if it doesn't exist
-os.makedirs(drive_folder, exist_ok=True)
-print("Target folder ready at:", drive_folder)
-
-# 5) Save the DataFrame to that folder
-# replace `results` with your actual DataFrame variable name
-csv_path = os.path.join(drive_folder, 'results_v9.csv')
-results_v9.to_csv(csv_path, index=False)
-print("Saved CSV to:", csv_path)
-
-results_v9.to_csv("results_v9.csv", index=False)
-
-from google.colab import files
-files.download("results_v9.csv")
 
 rs.best_estimator_
 rs.best_params_
