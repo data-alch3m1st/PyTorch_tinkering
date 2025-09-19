@@ -2,17 +2,6 @@
 
 # BLUF: The intent of this standalone .py file is for modularity/ portability/ process rather than to be run as a standalone; (this code is primarily for execution via Jupyter Notebook.) Essentially, until I become more proficient with PyTorch, I want to be able to use the processes developed here using skorch & PyTorch to build other models and its just easier to do that (IMHO) from a VS Code .py file.
 
-"""
-*Given the significant demands on memory (and I am using a MacBook so no CUDA for me), have to run this in Google Colab for baller T4 CUDA...*
-
-***UPDATE:*** 
-
-*I re-ran a skorch RandomSearchCV but with some adjustments to get better efficiency out of the grid search in order to exposed a greater number of hyper-params combinations. As such, I upped the n_iter=20 (prev. n_iter=10) and lowered the cv=2 (prev. cv=3). which increased total iterations to 40, but getting 20 hyperparam combos instead of 10.*
-
-*Regardless, while model performed quite well, even hitting higher numbers in early epochs, I STILL could not break 90.00%... Can pretty close though:*
-
-`Epoch 75/100 - Train Loss: 0.0748, Train Acc: 0.9730 - Test Loss: 0.4307, Test Acc: 0.8994`
-"""
 
 ## If running on Colab, will need to pip install skorch & torchmetrics each time;
 
@@ -244,10 +233,38 @@ results_v9.head()
 
 results_v9.sort_values(by='rank_test_score', ascending=True).head(5)
 
+# Printing out 'Top 3' Params (if after a full 100-epoch PyTorch native train loop and/or subsequent retrain the results are still not ideal, can pivot to the #2 and/or #3 params;)
 print(results_v9.sort_values(by='rank_test_score', ascending=True)['params'].iloc[0])
 print(results_v9.sort_values(by='rank_test_score', ascending=True)['params'].iloc[1])
 print(results_v9.sort_values(by='rank_test_score', ascending=True)['params'].iloc[2])
 
+# from google.colab import drive
+# drive.mount('/content/drive')   # follow the auth steps
+results_v9.to_csv('/content/drive/MyDrive/results_v9.csv', index=False)
+
+# 2) Inspect the current Colab VM working directory
+import os
+print("Colab VM cwd:", os.getcwd())
+print("Files in /content:", os.listdir('/content'))
+
+# 3) Define the Drive path you want to use
+# Note: "MyDrive" is the mount point for "My Drive"
+drive_folder = '/content/drive/MyDrive/Colab Notebooks/PyTorch_tinkering'
+
+# 4) Create the target folder if it doesn't exist
+os.makedirs(drive_folder, exist_ok=True)
+print("Target folder ready at:", drive_folder)
+
+# 5) Save the DataFrame to that folder
+# replace `results` with your actual DataFrame variable name
+csv_path = os.path.join(drive_folder, 'results_v9.csv')
+results_v9.to_csv(csv_path, index=False)
+print("Saved CSV to:", csv_path)
+
+results_v9.to_csv("results_v9.csv", index=False)
+
+from google.colab import files
+files.download("results_v9.csv")
 
 rs.best_estimator_
 rs.best_params_
@@ -525,3 +542,16 @@ torch.save(model.state_dict(), "Cifar10CNN_v9_more_retrained_best_weights.pth")
 torch.save(model.state_dict(), "Cifar10CNN_v9_best_weights.pth")
 
 print("\nClassification Report:\n", classification_report(all_labels, all_preds))
+
+
+# NOTES:
+
+"""
+***UPDATE:*** 
+
+*I re-ran a skorch RandomSearchCV but with some adjustments to get better efficiency out of the grid search in order to exposed a greater number of hyper-params combinations. As such, I upped the n_iter=20 (prev. n_iter=10) and lowered the cv=2 (prev. cv=3). which increased total iterations to 40, but getting 20 hyperparam combos instead of 10.*
+
+*Regardless, while model performed quite well, even hitting higher numbers in early epochs, I STILL could not break 90.00%... Can pretty close though:*
+
+`Epoch 75/100 - Train Loss: 0.0748, Train Acc: 0.9730 - Test Loss: 0.4307, Test Acc: 0.8994`
+"""
