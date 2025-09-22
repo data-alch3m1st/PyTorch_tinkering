@@ -1,4 +1,19 @@
 
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.utils.data import DataLoader
+from torchvision import datasets, transforms
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+from timeit import default_timer as timer
+from tqdm import tqdm
+
+import warnings
+warnings.filterwarnings("ignore")
 # -------------------------------------------------------------------- #
 
 # Train Loop
@@ -50,7 +65,7 @@ def train_step(
 # Test Loop
 
 def test_step(
-    model: torch.nn.Modul
+    model: torch.nn.Module   
     , dataloader: torch.utils.data.DataLoader
     , loss_fn: torch.nn.Module):
     # Put model in eval mode
