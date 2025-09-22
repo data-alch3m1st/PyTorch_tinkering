@@ -14,6 +14,7 @@ from tqdm import tqdm
 
 import warnings
 warnings.filterwarnings("ignore")
+
 # -------------------------------------------------------------------- #
 
 # Train Loop
@@ -103,6 +104,8 @@ def test_step(
 
 from tqdm.auto import tqdm
 
+epochs = 5
+
 # 1. Take in various parameters required for training and test steps
 def train(
     model: torch.nn.Module
@@ -110,7 +113,7 @@ def train(
     , test_dataloader: torch.utils.data.DataLoader
     , optimizer: torch.optim.Optimizer
     , loss_fn: torch.nn.Module = nn.CrossEntropyLoss()
-    , epochs: int = 5):
+    , epochs: int = epochs):
     
     # 2. Create empty results dictionary
     results = {
