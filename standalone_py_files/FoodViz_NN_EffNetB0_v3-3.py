@@ -5,7 +5,9 @@
 # Imports
 # -------------------------------------------------------------------- #
 import torch
-from torchvision import models, datasets, transforms
+from torchvision import (
+    models, datasets, transforms
+    )
 from torch.utils.data import DataLoader
 import torch.nn as nn
 import torch.optim as optim
@@ -13,16 +15,16 @@ import os
 
 from PIL import Image
 from sklearn.metrics import (
-    classification_report, confusion_matrix, ConfusionMatrixDisplay
-)
+    classification_report
+    , confusion_matrix
+    , ConfusionMatrixDisplay
+    )
 
 import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 from datetime import datetime
-
 from tqdm import tqdm
-from matplotlib import pyplot as plt
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -212,35 +214,136 @@ current_date = datetime.now().strftime("%Y%m%d")
 model_save_path = os.path.join(save_dir, f"efficientnet_b0_pizza_steak_sushi_{current_date}.pth")
 
 # -------------------------------------------------------------------- #
-
+# Save the trained model to .pth
 # -------------------------------------------------------------------- #
-
-
-
-# -------------------------------------------------------------------- #
-
-# -------------------------------------------------------------------- #
-
+# Save only the parameters
+torch.save(model.state_dict(), model_save_path)
+print(f"Model state_dict saved to: {model_save_path}")
 
 
 # -------------------------------------------------------------------- #
+# Test the trained model on a few 'unseen' images from the web;
+# -------------------------------------------------------------------- #
+# Folder containing unseen images (these are images of pizza/ steak/ sushi randomly grabbed fm the internet;)
+folder_path = "./data/unseen_pza_stk_ssh"
+
+# Make a list of image files
+image_files = [f for f in os.listdir(folder_path) if f.lower().endswith((".jpg", ".jpeg", ".png"))]
+
+# Preprocessing used for EfficientNet_B0
+weights = models.EfficientNet_B0_Weights.IMAGENET1K_V1
+preprocess = weights.transforms()
+
+# Class names (same as your dataset)
+class_names = ["pizza", "steak", "sushi"]
+
+# Ensure the model is in evaluation mode
+model.eval()
+model = model.to(device)
+
 
 # -------------------------------------------------------------------- #
+# Actual predix on unseen imgs:
+# -------------------------------------------------------------------- #
+predicted_labels = []
+for img_name in image_files:
+    img_path = os.path.join(folder_path, img_name)
+    image = Image.open(img_path).convert("RGB")
+    input_tensor = preprocess(image).unsqueeze(0).to(device)
 
+    with torch.no_grad():
+        output = model(input_tensor)
+        probabilities = torch.nn.functional.softmax(output[0], dim=0)
+        predicted_class = class_names[probabilities.argmax()]
+        predicted_labels.append(predicted_class)
+
+    print(f"{img_name} → Predicted: {predicted_class}")
+
+# -------------------------------------------------------------------- #
+# Extract the true labels from the filenames and generate classification report & confusion matrix;
+# -------------------------------------------------------------------- #
+# Extract true labels from filenames
+true_labels = [f.split("_")[0] for f in image_files]
+
+print("Classification Report:\n")
+print(classification_report(true_labels, predicted_labels))
+
+print("Confusion Matrix:\n")
+print(confusion_matrix(true_labels, predicted_labels))
+
+# -------------------------------------------------------------------- #
+# ConfusionMatrixDisplay - plotted (note ~ this is '.from_predictions' method);
+# -------------------------------------------------------------------- #
+disp = ConfusionMatrixDisplay.from_predictions(
+    true_labels, predicted_labels
+    , normalize="true", cmap="Blues"
+)
+
+# replace default annotations with two-decimal strings
+for txt in plt.gca().texts: txt.set_text(f"{float(txt.get_text()):.2f}")
+plt.show();
 
 
 # -------------------------------------------------------------------- #
+# Visualizing predix imgs (with labels affixed to each img):
+# -------------------------------------------------------------------- #
+# Img / label viz function:
+def show_image_prediction(img_path):
+    # Load and preprocess
+    image = Image.open(img_path).convert("RGB")
+    input_tensor = preprocess(image).unsqueeze(0).to(device)
+
+    # Predict
+    with torch.no_grad():
+        output = model(input_tensor)
+        probabilities = torch.nn.functional.softmax(output[0], dim=0)
+        pred_class = class_names[probabilities.argmax()]
+
+    # Display with matplotlib
+    plt.figure(figsize=(5,5))
+    plt.imshow(image)
+    plt.axis("off")
+    plt.title(f"Predicted: {pred_class}", fontsize=14, color='green')
+    plt.show();
+
+# Visualize one unseen image with prediction (e.g., '[0]'th image);
+show_image_prediction(os.path.join(folder_path, image_files[0]))
 
 # -------------------------------------------------------------------- #
-
+# Loop through all unseen images and display with predictions;
+# -------------------------------------------------------------------- #
+for img_name in image_files:
+    img_path = os.path.join(folder_path, img_name)
+    show_image_prediction(img_path)
 
 
 # -------------------------------------------------------------------- #
-
+#    <<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRAS >>>>>>>>>>>>>>>>>>>>>>>>>>>    #
 # -------------------------------------------------------------------- #
 
+# -------------------------------------------------------------------- #
+# Viewing shapes of random imgs from the transformed dataset:
+# -------------------------------------------------------------------- #
+# get one batch
+images, labels = next(iter(train_loader))
 
+print("images.shape:", images.shape)   # e.g. torch.Size([32, 3, H, W])
+print("labels.shape:", labels.shape)   # e.g. torch.Size([32])
 
 # -------------------------------------------------------------------- #
+images, labels = next(iter(train_loader))
+i = torch.randint(len(images), (1,)).item()   # random index in the batch
+print(f"sample index: {i}")
+print("single image shape:", images[i].shape)  # e.g. torch.Size([3, H, W])
+print("single label:", labels[i].item())
 
+# -------------------------------------------------------------------- #
+import random
+idx = random.randrange(len(train_dataset))
+img, label = train_dataset[idx]
+print("dataset sample shape:", img.shape)   # e.g. torch.Size([3, H, W])
+print("label:", label)
+
+# -------------------------------------------------------------------- #
+# -------------------------------------------------------------------- #
 # -------------------------------------------------------------------- #
