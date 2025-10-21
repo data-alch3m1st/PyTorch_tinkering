@@ -297,14 +297,23 @@ def show_image_prediction(img_path):
     with torch.no_grad():
         output = model(input_tensor)
         probabilities = torch.nn.functional.softmax(output[0], dim=0)
-        pred_class = class_names[probabilities.argmax()]
+        pred_idx = probabilities.argmax()
+        pred_class = class_names[pred_idx]
+        pred_prob = probabilities[pred_idx].item() * 100
 
-    # Display with matplotlib
-    plt.figure(figsize=(5,5))
+    # Display image with prediction
+    plt.figure(figsize=(5, 5))
     plt.imshow(image)
     plt.axis("off")
-    plt.title(f"Predicted: {pred_class}", fontsize=14, color='green')
-    plt.show();
+    plt.title(f"Predicted: {pred_class} ({pred_prob:.2f}%)", fontsize=14, color='green')
+    plt.show()
+
+    # Print probability distribution below the image
+    print("Class probabilities:")
+    for i, cls in enumerate(class_names):
+        prob = probabilities[i].item() * 100
+        mark = "True" if i == pred_idx else "False"
+        print(f"{mark} {cls:10s}: {prob:.4f}%")
 
 # Visualize one unseen image with prediction (e.g., '[0]'th image);
 show_image_prediction(os.path.join(folder_path, image_files[0]))
