@@ -145,7 +145,7 @@ __all__ = [
 
 
 
-# Including a separate eval function with params enabled to facilitate sklearn style metrics (confusion matrix, classification report, etc.)
+# Including a separate eval function with params enabled to facilitate sklearn style metrics (confusion matri {both in text and in a plot}, classification report, etc.)
 
 def evaluate_model_with_cm_params(model, test_loader, device):
     """
