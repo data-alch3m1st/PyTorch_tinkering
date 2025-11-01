@@ -142,3 +142,49 @@ __all__ = [
     "train_epoch_loop",
     , "evaluate_model"
 ]
+
+
+
+import torch
+
+def evaluate_model_with_cm_params(model, test_loader, device):
+    """
+    Evaluate a PyTorch model on test data and return accuracy plus
+    the predictions and true labels needed for a confusion matrix / classification report.
+
+    Args:
+        model:       PyTorch model to evaluate (already moved to device)
+        test_loader: DataLoader for test data
+        device:      torch.device set earlier in your notebook
+
+    Returns:
+        test_acc (float): Test accuracy in percent (0-100)
+        all_preds (np.ndarray): Predicted class indices for the entire test set
+        all_labels (np.ndarray): True class indices for the entire test set
+    """
+    model.eval()
+    correct = 0
+    total = 0
+
+    all_preds = []
+    all_labels = []
+
+    with torch.no_grad():
+        for inputs, labels in test_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+
+            outputs = model(inputs)
+            _, preds = torch.max(outputs, 1)
+
+            # accumulate accuracy numerators/denominators
+            correct += torch.sum(preds == labels).item()
+            total += labels.size(0)
+
+            # store for CM / report later
+            all_preds.extend(preds.detach().cpu().numpy())
+            all_labels.extend(labels.detach().cpu().numpy())
+
+    test_acc = (correct / total * 100) if total > 0 else 0.0
+    print(f"Test Accuracy: {test_acc:.4f}%")
+
+    return test_acc, all_preds, all_labels
