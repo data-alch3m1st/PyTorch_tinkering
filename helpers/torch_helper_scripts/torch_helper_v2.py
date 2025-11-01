@@ -145,7 +145,7 @@ __all__ = [
 
 
 
-import torch
+# Including a separate eval function with params enabled to facilitate sklearn style metrics (confusion matrix, classification report, etc.)
 
 def evaluate_model_with_cm_params(model, test_loader, device):
     """
