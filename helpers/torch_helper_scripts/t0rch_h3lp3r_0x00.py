@@ -252,23 +252,23 @@ for cls in class_names:
 # --------------------------------------------------------------------------- #
 # show_image_prediction(), extended to optionally accept true_label
 
-from PIL import Image
-import torch
-import matplotlib.pyplot as plt
-
 def show_image_prediction(
-    img_path
-    , true_label=None
+    img_path,
+    true_label=None,
+    model=None,
+    preprocess=None,
+    class_names=None,
+    device=device
 ):
     """
     Displays an image, model prediction, and full class probability table.
     Optionally prints the provided true_label for quick correctness check.
     """
-    # Load and preprocess
+    if model is None or preprocess is None or class_names is None:
+        raise ValueError("model, preprocess, and class_names must be provided.")
+
     image = Image.open(img_path).convert("RGB")
     input_tensor = preprocess(image).unsqueeze(0).to(device)
-
-    # Predict
     model.eval()
     with torch.no_grad():
         output = model(input_tensor)
@@ -277,7 +277,6 @@ def show_image_prediction(
         pred_class = class_names[pred_idx]
         pred_prob = float(probabilities[pred_idx].item() * 100.0)
 
-    # Display image with prediction
     title_str = f"Predicted: {pred_class} ({pred_prob:.2f}%)"
     if true_label is not None:
         correctness = "CORRECT!" if pred_class == true_label else "FALSE!"
@@ -289,13 +288,13 @@ def show_image_prediction(
     plt.title(title_str, fontsize=14, color='green')
     plt.show()
 
-    # Print probability distribution below the image
     print("Class probabilities:")
     for i, cls in enumerate(class_names):
         prob = float(probabilities[i].item() * 100.0)
         mark = "True " if (true_label is not None and cls == true_label) else "     "
         star = "*" if i == pred_idx else " "
-        print(f"{star} {mark}{cls:20s}: {prob:7.4f}%")    
+        print(f"{star} {mark}{cls:20s}: {prob:7.4f}%")
+
 
         """
 # Example Usage 1:
@@ -497,3 +496,61 @@ plot_training_curves(
 )
 """
 
+
+
+
+#########################
+
+# CHOPPED:
+
+'''
+
+
+from PIL import Image
+import torch
+import matplotlib.pyplot as plt
+
+def show_image_prediction(
+    img_path
+    , true_label=None
+):
+    """
+    Displays an image, model prediction, and full class probability table.
+    Optionally prints the provided true_label for quick correctness check.
+    """
+    # Load and preprocess
+    image = Image.open(img_path).convert("RGB")
+    input_tensor = preprocess(image).unsqueeze(0).to(device)
+
+    # Predict
+    model.eval()
+    with torch.no_grad():
+        output = model(input_tensor)
+        probabilities = torch.nn.functional.softmax(output[0], dim=0)
+        pred_idx = int(probabilities.argmax().item())
+        pred_class = class_names[pred_idx]
+        pred_prob = float(probabilities[pred_idx].item() * 100.0)
+
+    # Display image with prediction
+    title_str = f"Predicted: {pred_class} ({pred_prob:.2f}%)"
+    if true_label is not None:
+        correctness = "CORRECT!" if pred_class == true_label else "FALSE!"
+        title_str = f"{title_str} | True: {true_label} {correctness}"
+
+    plt.figure(figsize=(5, 5))
+    plt.imshow(image)
+    plt.axis("off")
+    plt.title(title_str, fontsize=14, color='green')
+    plt.show()
+
+    # Print probability distribution below the image
+    print("Class probabilities:")
+    for i, cls in enumerate(class_names):
+        prob = float(probabilities[i].item() * 100.0)
+        mark = "True " if (true_label is not None and cls == true_label) else "     "
+        star = "*" if i == pred_idx else " "
+        print(f"{star} {mark}{cls:20s}: {prob:7.4f}%")    
+
+
+
+'''
