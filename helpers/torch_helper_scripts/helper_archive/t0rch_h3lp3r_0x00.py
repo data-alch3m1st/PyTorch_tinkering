@@ -253,12 +253,12 @@ for cls in class_names:
 # show_image_prediction(), extended to optionally accept true_label
 
 def show_image_prediction(
-    img_path,
-    true_label=None,
-    model=None,
-    preprocess=None,
-    class_names=None,
-    device=device
+    img_path
+    , true_label=None
+    , model=None
+    , preprocess=None
+    , class_names=None
+    , device=device
 ):
     """
     Displays an image, model prediction, and full class probability table.
