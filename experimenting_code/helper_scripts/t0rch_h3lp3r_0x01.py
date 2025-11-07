@@ -13,6 +13,8 @@ import seaborn as sns
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
+from datetime import datetime
+
 
 # --- Device selection (CUDA -> MPS -> CPU) ---
 if torch.cuda.is_available():
@@ -22,6 +24,9 @@ elif torch.backends.mps.is_available():
 else:
     device = "cpu"   # CPU fallback
 print("Device:", device)
+
+# Set current date string for plot titles
+current_date = datetime.now().strftime("%Y-%m-%d")
 
 # --------------------------------------------------------------------------- #
 
@@ -358,7 +363,7 @@ def plot_training_curves_seaborn(
     - title: Title of the plot (default: "Training Loss & Accuracy over Epochs").
     """
     sns.set_style('darkgrid')
-    fig, ax1 = plt.subplots(figsize=(10, 6))
+    fig, ax1 = plt.subplots(figsize=(10, 6))   
 
 # Plot loss on the left y-axis using Seaborn
     sns.lineplot(
