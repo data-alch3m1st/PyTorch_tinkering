@@ -1,4 +1,4 @@
-# t0rch_h3lp3r_0x00.py #
+# t0rch_h3lp3r_0x01.py #
 
 # Lightweight Model-Agnostic PyTorch training/evaluation helpers for notebooks & scripts. 
 
@@ -252,15 +252,13 @@ for cls in class_names:
 # --------------------------------------------------------------------------- #
 # show_image_prediction(), extended to optionally accept true_label
 
-# show_image_prediction(), extended to optionally accept true_label
-
 def show_image_prediction(
-    img_path,
-    true_label=None,
-    model=None,
-    preprocess=None,
-    class_names=None,
-    device=device
+    img_path
+    , true_label=None
+    , model=None
+    , preprocess=None
+    , class_names=None
+    , device=device
 ):
     """
     Displays an image, model prediction, and full class probability table.
@@ -306,7 +304,15 @@ def show_image_prediction(
 
 assert len(test_items) > 0, "No test images found."
 rand_path, rand_true = random.choice(test_items)
-show_image_prediction(rand_path, true_label=rand_true)
+
+show_image_prediction(
+    img_path=rand_path
+    , model=model
+    , preprocess=preprocess
+    , class_names=class_names
+    , device=device
+    , true_label=rand_true
+)
 
 
 # Example Usage 2:
@@ -319,7 +325,14 @@ for cls in class_names:
         print(f"[skip] No images found for class: {cls}")
         continue
     img_path = random.choice(candidates)
-    show_image_prediction(img_path, true_label=cls)
+    show_image_prediction(
+        img_path=img_path   
+        , model=model    
+        , preprocess=preprocess    
+        , class_names=class_names   
+        , device=device    
+        , true_label=cls
+    )
     
         """
 
