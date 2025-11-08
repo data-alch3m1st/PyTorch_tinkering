@@ -23,6 +23,9 @@ else:
     device = "cpu"   # CPU fallback
 print("Device:", device)
 
+# Set current date from within script;
+current_date = datetime.now().strftime("%Y-%m-%d")
+
 # --------------------------------------------------------------------------- #
 
 # Functionized train loop;
