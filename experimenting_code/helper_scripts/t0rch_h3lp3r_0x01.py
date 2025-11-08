@@ -362,6 +362,10 @@ def plot_training_curves_seaborn(
     - acc_col: Column name for the accuracy values (default: "Train Accuracy").
     - title: Title of the plot (default: "Training Loss & Accuracy over Epochs").
     """
+    
+    # Set current date from within script;
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    
     sns.set_style('darkgrid')
     fig, ax1 = plt.subplots(figsize=(10, 6))   
 
@@ -452,6 +456,9 @@ def plot_training_curves(
     - acc_col: Column name for the accuracy values (default: "Train Accuracy").
     - title: Title of the plot (default: "Training Loss & Accuracy over Epochs").
     """
+    # Set current date from within script;
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    
     fig = px.line(
         df
         , x=x_col
