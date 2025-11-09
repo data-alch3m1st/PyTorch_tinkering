@@ -450,6 +450,7 @@ def plot_training_curves(
     , loss_col="Train Loss"
     , acc_col="Train Accuracy"
     , title="Training Loss & Accuracy over Epochs"
+    , add_date=True
 ):
     """
     Plots training loss and accuracy curves using Plotly Express.
@@ -461,8 +462,11 @@ def plot_training_curves(
     - acc_col: Column name for the accuracy values (default: "Train Accuracy").
     - title: Title of the plot (default: "Training Loss & Accuracy over Epochs").
     """
+    
     # Set current date from within script;
-    current_date = datetime.now().strftime("%Y-%m-%d")
+    if add_date:
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        title = f"{title} ~ {current_date}" 
     
     fig = px.line(
         df
@@ -525,7 +529,7 @@ plot_training_curves(
     , x_col="Epoch"
     , loss_col="Train Loss"
     , acc_col="Train Accuracy"
-    , title=f"Training Loss & Accuracy over Epochs (EfficientNetB2) ~ {current_date}"
+    , title=f"Training Loss & Accuracy over Epochs (EfficientNetB2)"
 )
 """
 
