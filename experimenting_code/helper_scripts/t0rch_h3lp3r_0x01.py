@@ -524,3 +524,82 @@ plot_training_curves(
 )
 """
 
+# --------------------------------------------------------------------------- #
+# Function to check for duplicate images across directories:
+
+# Dependency function - need to hash the images:
+def compute_image_hash(image_path):
+    """
+    Compute a unique MD5 hash for an image file.
+
+    Args:
+        image_path (str): Path to the image file.
+
+    Returns:
+        str: MD5 hash of the image as a hexadecimal string.
+    """
+    with Image.open(image_path) as img:
+        # Convert image to bytes
+        img_bytes = img.tobytes()
+        # Compute hash
+        return hashlib.md5(img_bytes).hexdigest()
+
+# Actual dupe finder (with above hashing function built-in):
+def find_duplicate_images(unseen_dir, train_dir, test_dir, verbose=True):
+    """
+    Check if images in the 'unseen' directory are already present in the train or test directories.
+    This is useful for ensuring that images used for testing are truly unseen by the model.
+
+    Args:
+        unseen_dir (str): Path to the directory containing images to check for duplicates.
+        train_dir (str): Path to the directory containing training images.
+        test_dir (str): Path to the directory containing test images.
+        verbose (bool): If True, prints the results directly. If False, returns the list of duplicates silently.
+
+    Returns:
+        list: A list of tuples, where each tuple contains the path to a duplicate image in the unseen directory
+              and the path to the matching image in the train or test directory.
+              If no duplicates are found, the list will be empty.
+    """
+    # Get all image paths
+    unseen_images = [os.path.join(unseen_dir, f) for f in os.listdir(unseen_dir) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
+    train_images = [os.path.join(train_dir, f) for f in os.listdir(train_dir) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
+    test_images = [os.path.join(test_dir, f) for f in os.listdir(test_dir) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
+
+    # Compute hashes for train and test images
+    train_hashes = {compute_image_hash(img): img for img in train_images}
+    test_hashes = {compute_image_hash(img): img for img in test_images}
+
+    # Check unseen images
+    duplicates = []
+    for img in unseen_images:
+        img_hash = compute_image_hash(img)
+        if img_hash in train_hashes or img_hash in test_hashes:
+            duplicates.append((img, train_hashes.get(img_hash, test_hashes.get(img_hash))))
+
+    # Print results if verbose is True
+    if verbose:
+        if duplicates:
+            print("Duplicate images found:")
+            for unseen, existing in duplicates:
+                print(f"Unseen image: {unseen} is a duplicate of: {existing}")
+        else:
+            print("No duplicate images found. All images are truly unseen.")
+
+    return duplicates
+
+"""
+# Example Usage:
+
+unseen_dir = '../data/unseen_imgs/'
+train_dir = '../data/train/'
+test_dir = '../data/test/'
+
+# Call the function with verbose=True (default)
+duplicates = find_duplicate_images(unseen_dir, train_dir, test_dir)
+
+    
+"""
+
+# ------------------------------- #
+
