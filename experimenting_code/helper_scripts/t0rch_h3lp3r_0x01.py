@@ -346,11 +346,13 @@ for cls in class_names:
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+from datetime import datetime
 
 def plot_training_curves_seaborn(
     df, x_col="Epoch"
     , loss_col="Train Loss", acc_col="Train Accuracy"
     , title="Training Loss & Accuracy over Epochs"
+    , add_date=True
 ):
     """
     Plots training loss and accuracy curves using Seaborn and matplotlib.
@@ -364,7 +366,9 @@ def plot_training_curves_seaborn(
     """
     
     # Set current date from within script;
-    current_date = datetime.now().strftime("%Y-%m-%d")
+    if add_date:
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        title = f"{title} ~ {current_date}"
     
     sns.set_style('darkgrid')
     fig, ax1 = plt.subplots(figsize=(10, 6))   
@@ -438,6 +442,7 @@ plot_training_curves_seaborn(
 
 import plotly.express as px
 import plotly.graph_objects as go
+from datetime import datetime
 
 def plot_training_curves(
     df
