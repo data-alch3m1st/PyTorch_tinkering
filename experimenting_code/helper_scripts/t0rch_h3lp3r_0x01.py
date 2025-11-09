@@ -473,7 +473,7 @@ def plot_training_curves(
         , x=x_col
         , y=loss_col
         , height=600
-        , width=800
+        , width=900
         , title=title
         , markers=True
     )
