@@ -256,6 +256,10 @@ for cls in class_names:
 
 # --------------------------------------------------------------------------- #
 # show_image_prediction(), extended to optionally accept true_label
+import torch
+import matplotlib.pyplot as plt
+import numpy as np
+import PIL.Image as Image
 
 def show_image_prediction(
     img_path
