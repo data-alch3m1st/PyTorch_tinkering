@@ -535,6 +535,9 @@ plot_training_curves(
 
 # --------------------------------------------------------------------------- #
 # Function to check for duplicate images across directories:
+import hashlib
+import os
+import PIL.Image as Image
 
 # Dependency function - need to hash the images:
 def compute_image_hash(image_path):
