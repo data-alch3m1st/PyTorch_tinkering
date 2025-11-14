@@ -16,6 +16,8 @@ import pandas as pd
 from datetime import datetime
 import hashlib
 
+from sklearn.metrics import (confusion_matrix, classification_report, ConfusionMatrixDisplay)
+
 # --- Device selection (CUDA -> MPS -> CPU) ---
 if torch.cuda.is_available():
     device = "cuda"  # NVIDIA GPU
