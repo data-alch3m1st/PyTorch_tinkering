@@ -18,7 +18,8 @@ import hashlib
 
 from sklearn.metrics import (confusion_matrix, classification_report, ConfusionMatrixDisplay)
 
-# --- Device selection (CUDA -> MPS -> CPU) ---
+# MacOS-friendly device agnostic code #
+# --- Device selection (CUDA -> MPS -> CPU) --- #
 if torch.cuda.is_available():
     device = "cuda"  # NVIDIA GPU
 elif torch.backends.mps.is_available():
